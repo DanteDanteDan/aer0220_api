@@ -11,8 +11,8 @@ set_error_handler(function ($severidad, $mensaje, $fichero, $línea) {
     throw new \ErrorException($mensaje, 0, $severidad, $fichero, $línea);
 });
 
-require __DIR__ .'/../vendor/autoload.php';       //Slim
-require __DIR__ .'/../app/DataBase.php';   //Database conection
+require __DIR__ .'/../vendor/autoload.php'; //Slim
+require __DIR__ .'/../app/DataBase.php';    //Database conection
 
 // Config dependencies
 $dependenciesConfig = require __DIR__ . '/../app/dependencies.php';
