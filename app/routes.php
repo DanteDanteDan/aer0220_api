@@ -15,25 +15,43 @@ return function(App $app, Array $middlewares){
 
     //define('__BASE_PATH__', '/aer0220_api/');
 
-    //Default -> App is running ? / http://localhost/aer0220_api/courses
+    //Default -> Check if the app is running -> http://localhost/aer0220_api
     $app->get($settings['basePath'], function (Request $request, Response $response, $args) {
         $response->getBody()->write("Running ..");
         return $response;
     });
 
     $app->group($settings['basePath'], function (RouteCollectorProxy $group) use ($middlewares) {
+
         // Student Controller
-        $group->get('gender', StudentController::class.':getGenders');
-        $group->get('courses', StudentController::class.':getCourses');
-        $group->get('course/{courses_id}', StudentController::class.':getCourse');
+            // View Catalogues
+        $group->get('cat_cities', StudentController::class.':getCities');
+        $group->get('cat_courses', StudentController::class.':getCourses');
+        $group->get('cat_genders', StudentController::class.':getGenders');
+        $group->get('cat_grade', StudentController::class.':getGrade');
+        $group->get('cat_meet_us', StudentController::class.':getMeetUs');
+        $group->get('cat_payment_status', StudentController::class.':getPaymentStatus');
+        $group->get('cat_payment_type', StudentController::class.':getPaymentType');
+        $group->get('cat_relationship', StudentController::class.':getRelationship');
+        $group->get('cat_user_types', StudentController::class.':getUserTypes');
+
+        $group->get('cat_courses/{courses_id}', StudentController::class.':getCourse'); // example to find by id
+            // View Students / payments
+        $group->get('payments', StudentController::class.':getPayments');
+        $group->get('students', StudentController::class.':getStudents');
+            // Insert Students / payments
+
         // User Controller
-        $group->post('users', UserController::class.':create');
+            // View Users
         $group->get('users', UserController::class.':getAll');
         $group->get('users/{user_id}', UserController::class.':getUser');
+            // Insert
+        $group->post('users', UserController::class.':create');
 
-    })->add($middlewares['authMiddleware']); // Token Validation
+    })->add($middlewares['authMiddleware']); // Token Validation to the group
 
-    //SignIn
+    // User Controller
+        //SignIn
     $app->post($settings['basePath'].'sign-in', UserController::class.':authenticate');
 
 };

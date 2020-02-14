@@ -7,7 +7,6 @@ set_error_handler(function ($severidad, $mensaje, $fichero, $línea) {
     if (!(error_reporting() & $severidad)) {
         return;
     }
-
     throw new \ErrorException($mensaje, 0, $severidad, $fichero, $línea);
 });
 
@@ -25,7 +24,7 @@ $app = AppFactory::create();
 $middlewaresConfig = require __DIR__ . '/../app/middlewares.php';
 $middlewares = $middlewaresConfig($app);
 
-// Config Database
+// Config Database - Eloquent
 $dbConfig = require __DIR__ . '/../app/db.php';
 $dbConfig($app->getContainer()->get('settings')['db']);
 

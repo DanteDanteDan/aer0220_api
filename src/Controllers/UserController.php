@@ -2,7 +2,6 @@
 
 namespace App\Controllers;
 
-
 use App\Services\UserService;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface as Response;
@@ -21,16 +20,18 @@ class UserController
         $this->_userService = new UserService($container);
     }
 
-    public function getAll(Request $request, Response $response) {
+    public function getAll(Request $request, Response $response) // View All Users
+    {
 
         $result = $this->_userService->getAll();
         $response->getBody()->write($result->toJson());
 
-        return $response->withHeader('Content-Type', 'application/json') //metadata information
+        return $response->withHeader('Content-Type', 'application/json')
             ->withStatus(200);
     }
 
-    public function getUser(Request $request, Response $response, $args) {
+    public function getUser(Request $request, Response $response, $args) //View One User
+    {
 
         $result = $this->_userService->getUser($args['user_id']);
 
@@ -40,12 +41,12 @@ class UserController
 
         $response->getBody()->write(json_encode($result));
 
-        return $response->withHeader('Content-Type', 'application/json') //metadata information
-                        ->withStatus(200);
-
+        return $response->withHeader('Content-Type', 'application/json')
+            ->withStatus(200);
     }
 
-    public function create (Request $request, Response $response, $args) {
+    public function create(Request $request, Response $response) // Create User
+    {
         $entry = $this->_userService->create(
             (object) $request->getParsedBody()
         );
@@ -53,26 +54,24 @@ class UserController
         $response->getBody()->write($entry->toJson());
 
         return $response->withHeader('Content-Type', 'application/json')
-                        ->withStatus(201);
+            ->withStatus(201);
     }
 
 
-    public function authenticate (Request $request, Response $response) {
+    public function authenticate(Request $request, Response $response) // SignIn and return token
+    {
 
         $body = $request->getParsedBody();
-        $result = $this->_userService->authenticate($body['email'],$body['password']);
+        $result = $this->_userService->authenticate($body['email'], $body['password']);
 
         if ($result) {
             $response->getBody()->write(json_encode($result));
 
             return $response->withHeader('Content-Type', 'application/json')
-                            ->withStatus(200);
+                ->withStatus(200);
         }
 
         return $response->withHeader('Content-Type', 'application/json')
-                            ->withStatus(401);
-
+            ->withStatus(401);
     }
-
-
 }

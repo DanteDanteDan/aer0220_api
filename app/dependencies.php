@@ -11,5 +11,5 @@ return function () {
         return $settings;
     });
 
-    AppFactory::setContainer($container);//anidar
+    AppFactory::setContainer($container);
 };

@@ -2,9 +2,9 @@
 
 namespace App\Controllers;
 
-use App\Services\StudentService;
 use PDO;
 use PDOException;
+use App\Services\StudentService;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
@@ -40,7 +40,7 @@ class StudentController
 
         $response->getBody()->write(json_encode($result));
 
-        return $response->withHeader('Content-Type', 'application/json') //metadata information
+        return $response->withHeader('Content-Type', 'application/json')
             ->withStatus(200);
     }
 
@@ -49,7 +49,7 @@ class StudentController
         $result = $this->_studentService->getCourses();
         $response->getBody()->write($result->toJson());
 
-        return $response->withHeader('Content-Type', 'application/json') //metadata information
+        return $response->withHeader('Content-Type', 'application/json')
             ->withStatus(200);
     }
 
@@ -63,7 +63,7 @@ class StudentController
 
         $response->getBody()->write(json_encode($result));
 
-        return $response->withHeader('Content-Type', 'application/json') //metadata information
+        return $response->withHeader('Content-Type', 'application/json')
                         ->withStatus(200);
 
     }

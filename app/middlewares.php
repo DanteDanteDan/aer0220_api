@@ -14,7 +14,7 @@ return function (App $app) {
     $app->addBodyParsingMiddleware();
     $app->addErrorMiddleware($settings['displayErrors'], false, false);
 
-    // Custom
+    // Custom - Validation Token
     $authMiddleware = function (Request $request, RequestHandler $handler) use($container) {
 
         $secretKey = $container->get('settings')['secretKey'];

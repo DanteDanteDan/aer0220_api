@@ -3,45 +3,53 @@
 namespace App\Services;
 
 use PDO;
-use App\Models\aer0220_users;
+use App\Models\users;
+use App\Models\cat_user_types;
 use Psr\Container\ContainerInterface;
 use Illuminate\Database\Eloquent\Collection;
 use Firebase\JWT\JWT;
 
 class UserService
 {
-    private $_logger;
     private $_secretKey;
 
     public function __construct(ContainerInterface $container)
     {
-        //$this->_container = $container;
-        //$this->_logger = new $container->get('logger');
         $this->_secretKey = $container->get('settings')['secretKey'];
     }
 
-    public function getAll(): Collection
+    public function getAll(): Collection // View All Users
     {
-        return aer0220_users::all();
+        $result = users::all();
+
+        foreach ($result as $item) {
+            $item->userType;
+        }
+
+        return $result;
     }
 
-    public function getUser(int $user_id)
+    public function getUser(int $user_id) //View One User
     {
-        //return aer0220_users::find($courses_id);
-        $db = new DataBase();
+        $user = users::where('user_id', $user_id)
+                             ->first();
+        $user->userType;
+        return $user;
+
+        /*$db = new DataBase();
         $db = $db->conectDB();
         $sql = "SELECT * FROM aer0220_users where user_id = $user_id ";
         $content = $db->query($sql);
         $result = $content->fetchAll(PDO::FETCH_OBJ);
-        return $result;
+        return $result;*/
     }
 
-    public function create($obj)
+    public function create($obj) // Create User
     {
-        $entry = new aer0220_users;
+        $entry = new users;
 
         $entry->email = $obj->email;
-        $entry->password = md5($obj->password);
+        $entry->password = md5($obj->password); // encrypt
         $entry->user_type_id = $obj->user_type_id;
 
         $entry->save();
@@ -49,11 +57,11 @@ class UserService
         return $entry;
     }
 
-    public function authenticate(string $email, string $password): ?array
+    public function authenticate(string $email, string $password): ?array // Create session validation token
     {
-        //$password = md5($password);
+        $password = md5($password); // encrypt
 
-        $user = aer0220_users::where('password', $password)
+        $user = users::where('password', $password)
                              ->where('email',$email)
                              ->first();
 
