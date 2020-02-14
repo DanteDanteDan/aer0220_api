@@ -22,7 +22,7 @@ class UserService
     {
         $result = users::all();
 
-        foreach ($result as $item) {
+        foreach ($result as $item) { // FK user_type_id
             $item->userType;
         }
 
@@ -32,8 +32,10 @@ class UserService
     public function getUser(int $user_id) //View One User
     {
         $user = users::where('user_id', $user_id)
-                             ->first();
-        $user->userType;
+                     ->first();
+
+        $user->userType; // FK user_type_id
+
         return $user;
 
         /*$db = new DataBase();

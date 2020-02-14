@@ -8,7 +8,7 @@ class users extends Model
 {
     protected $table = 'aer0220_users'; // Table Name
 
-    public function userType()
+    public function userType() // FK user_type_id
     {
         return $this->belongsTo('App\Models\cat_user_types', 'user_type_id','user_type_id');
     }

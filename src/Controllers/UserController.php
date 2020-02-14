@@ -30,7 +30,7 @@ class UserController
             ->withStatus(200);
     }
 
-    public function getUser(Request $request, Response $response, $args) //View One User
+    public function getUser(Request $request, Response $response, $args) // View One User
     {
 
         $result = $this->_userService->getUser($args['user_id']);
