@@ -4,6 +4,8 @@ use Slim\App;
 use App\Controllers\UserController;
 use Slim\Routing\RouteCollectorProxy;
 use App\Controllers\StudentController;
+use App\Controllers\CatalogueController;
+use App\Controllers\PaymentController;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 
@@ -15,42 +17,59 @@ return function(App $app, Array $middlewares){
 
     // define('__BASE_PATH__', '/aer0220_api/');
 
-    // Default -> Check if the app is running -> http://localhost/aer0220_api
+    // Default -> Check if the app is running
     $app->get($settings['basePath'], function (Request $request, Response $response, $args) {
         $response->getBody()->write("Running ..");
         return $response;
     });
 
-    $app->group($settings['basePath'], function (RouteCollectorProxy $group) use ($middlewares) {
+    // Students
+    $app->group($settings['basePath'].'students', function (RouteCollectorProxy $group) use ($middlewares) {
 
-        // Student Controller
-            // View Catalogues
-        $group->get('cat_cities', StudentController::class.':getCities');
-        $group->get('cat_courses', StudentController::class.':getCourses');
-        $group->get('cat_genders', StudentController::class.':getGenders');
-        $group->get('cat_grade', StudentController::class.':getGrade');
-        $group->get('cat_meet_us', StudentController::class.':getMeetUs');
-        $group->get('cat_payment_status', StudentController::class.':getPaymentStatus');
-        $group->get('cat_payment_type', StudentController::class.':getPaymentType');
-        $group->get('cat_relationship', StudentController::class.':getRelationship');
-        $group->get('cat_user_types', StudentController::class.':getUserTypes');
-            // View payments / Students
-        $group->get('payments', StudentController::class.':getPayments');
-        $group->get('students', StudentController::class.':getStudents');
-        $group->get('students/{student_id}', StudentController::class.':getStudent');
-            // Insert Students / payments
+            // View Students
+        $group->get('', StudentController::class.':getAll');
+        $group->get('/{student_id}', StudentController::class.':getStudent');
+            // Insert Students
 
-        // User Controller
+    })->add($middlewares['authMiddleware']); // Token Validation
+
+    // Payments
+    $app->group($settings['basePath'].'payments', function (RouteCollectorProxy $group) use ($middlewares) {
+
+            // View Payments
+        $group->get('', PaymentController::class.':getPayments');
+        $group->get('/{payment_id}', PaymentController::class.':getStudent');
+            // Insert Payments
+
+    })->add($middlewares['authMiddleware']); // Token Validation
+
+    // Users
+    $app->group($settings['basePath'].'users', function (RouteCollectorProxy $group) use ($middlewares) {
+
             // View Users
-        $group->get('users', UserController::class.':getAll');
-        $group->get('users/{user_id}', UserController::class.':getUser');
+        $group->get('', UserController::class.':getAll');
+        $group->get('/{user_id}', UserController::class.':getUser');
             // Insert Users
-        $group->post('users', UserController::class.':create');
+        $group->post('', UserController::class.':create');
 
-    })->add($middlewares['authMiddleware']); // Token Validation to the group
+    })->add($middlewares['authMiddleware']); // Token Validation
 
-    // User Controller
-        // SignIn
+    // Catalogues
+    $app->group($settings['basePath'].'cat/', function (RouteCollectorProxy $group) use ($middlewares) {
+            // View Catalogues
+         $group->get('cities', CatalogueController::class.':getCities');
+         $group->get('courses', CatalogueController::class.':getCourses');
+         $group->get('genders', CatalogueController::class.':getGenders');
+         $group->get('grade', CatalogueController::class.':getGrade');
+         $group->get('meet_us', CatalogueController::class.':getMeetUs');
+         $group->get('payment_status', CatalogueController::class.':getPaymentStatus');
+         $group->get('payment_type', CatalogueController::class.':getPaymentType');
+         $group->get('relationship', CatalogueController::class.':getRelationship');
+         $group->get('user_types', CatalogueController::class.':getUserTypes');
+
+    })->add($middlewares['authMiddleware']); // Token Validation
+
+    // SignIn
     $app->post($settings['basePath'].'sign-in', UserController::class.':authenticate');
 
 };
