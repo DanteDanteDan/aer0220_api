@@ -50,6 +50,7 @@ class StudentController
 
         $response->getBody()->write($entry->toJson());
 
+        // Create Payment at the same time
                             // _paymentService
         $entryPayment = $this->_studentService->createPayment((object) $request->getParsedBody(), $entry->id);
 

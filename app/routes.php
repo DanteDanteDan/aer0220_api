@@ -6,22 +6,12 @@ use Slim\Routing\RouteCollectorProxy;
 use App\Controllers\StudentController;
 use App\Controllers\CatalogueController;
 use App\Controllers\PaymentController;
-use Psr\Http\Message\ResponseInterface as Response;
-use Psr\Http\Message\ServerRequestInterface as Request;
 
 return function (App $app, array $middlewares) {
 
     // Call container
     $container = $app->getContainer();
     $settings = $container->get('settings');
-
-    // define('__BASE_PATH__', '/aer0220_api/');
-
-    // Default -> Check if the app is running
-    $app->get($settings['basePath'], function (Request $request, Response $response, $args) {
-        $response->getBody()->write("Running ..");
-        return $response;
-    });
 
     // Students
     $app->group($settings['basePath'] . 'students', function (RouteCollectorProxy $group) use ($middlewares) {
@@ -66,6 +56,8 @@ return function (App $app, array $middlewares) {
         $group->get('relationship', CatalogueController::class . ':getRelationship');
         $group->get('user_types', CatalogueController::class . ':getUserTypes');
     })->add($middlewares['authMiddleware']); // Token Validation
+
+    // Count students
 
     // SignIn
     $app->post($settings['basePath'] . 'sign-in', UserController::class . ':authenticate');
