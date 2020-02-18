@@ -15,7 +15,17 @@ return function (App $app) {
     $app->addBodyParsingMiddleware();
     $app->addErrorMiddleware($settings['displayErrors'], false, false);
 
-    // Custom - Validation Token
+    // CORS requests
+    $app->add(function ($request, $handler) {
+        $response = $handler->handle($request);
+        return $response
+                ->withHeader('Access-Control-Allow-Origin', '*')
+                ->withHeader('Access-Control-Allow-Headers', 'X-Requested-With, Content-Type, Accept, Origin, Authorization')
+                ->withHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
+    });
+
+    // Custom
+        //Validation Token
     $authMiddleware = function (Request $request, RequestHandler $handler) use ($container) {
 
         $secretKey = $container->get('settings')['secretKey'];

@@ -3,15 +3,21 @@
 use Slim\App;
 use App\Controllers\UserController;
 use Slim\Routing\RouteCollectorProxy;
+use App\Controllers\PaymentController;
 use App\Controllers\StudentController;
 use App\Controllers\CatalogueController;
-use App\Controllers\PaymentController;
+use Slim\Exception\HttpNotFoundException;
 
 return function (App $app, array $middlewares) {
 
     // Call container
     $container = $app->getContainer();
     $settings = $container->get('settings');
+
+    // CORS requests
+    $app->options($settings['basePath'] . '{routes:.+}', function ($request, $response, $args) {
+        return $response;
+    });
 
     // Students
     $app->group($settings['basePath'] . 'students', function (RouteCollectorProxy $group) use ($middlewares) {
@@ -61,4 +67,9 @@ return function (App $app, array $middlewares) {
 
     // SignIn
     $app->post($settings['basePath'] . 'sign-in', UserController::class . ':authenticate');
+
+    // CORS requests
+    $app->map(['GET', 'POST', 'PUT', 'DELETE', 'PATCH'], $settings['basePath'] . '{routes:.+}', function ($request, $response) {
+        throw new HttpNotFoundException($request);
+    });
 };
