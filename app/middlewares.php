@@ -1,4 +1,5 @@
 <?php
+
 use Slim\App;
 use Firebase\JWT\JWT;
 use Slim\Psr7\Response;
@@ -15,14 +16,14 @@ return function (App $app) {
     $app->addErrorMiddleware($settings['displayErrors'], false, false);
 
     // Custom - Validation Token
-    $authMiddleware = function (Request $request, RequestHandler $handler) use($container) {
+    $authMiddleware = function (Request $request, RequestHandler $handler) use ($container) {
 
         $secretKey = $container->get('settings')['secretKey'];
         $token = $request->getHeaderLine('Authorization');
 
         try {
             JWT::decode($token, $secretKey, ['HS256']);
-        } catch(\Exception $ex) {
+        } catch (\Exception $ex) {
             $response = new Response();
             return $response->withStatus(401);
         }
@@ -34,5 +35,5 @@ return function (App $app) {
         'authMiddleware' => $authMiddleware
     ];
 
-    //$app->add($authMiddleware); //global
+    //$app->add($authMiddleware); // global
 };

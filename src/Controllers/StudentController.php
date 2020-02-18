@@ -2,26 +2,24 @@
 
 namespace App\Controllers;
 
-use PDO;
-use PDOException;
 use App\Services\StudentService;
-use Psr\Container\ContainerInterface;
+use App\Services\PaymentService;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 
 class StudentController
 {
 
-    protected $_container;
     private $_studentService;
+    private $_paymentService;
 
-    // constructor receives container instance
-    public function __construct(ContainerInterface $container)
+    public function __construct()
     {
-        $this->_container = $container;
         $this->_studentService = new StudentService();
+        $this->_paymentService = new PaymentService();
     }
 
+    // Get ->
     public function getAll(Request $request, Response $response) // All
     {
         $result = $this->_studentService->getStudents();
@@ -45,5 +43,19 @@ class StudentController
             ->withStatus(200);
     }
 
+    // Post ->
+    public function create(Request $request, Response $response, $args) // Create Student
+    {
+        $entry = $this->_studentService->create((object) $request->getParsedBody());
 
+        $response->getBody()->write($entry->toJson());
+
+                            // _paymentService
+        $entryPayment = $this->_studentService->createPayment((object) $request->getParsedBody(), $entry->id);
+
+        $response->getBody()->write($entryPayment->toJson());
+
+        return $response->withHeader('Content-Type', 'application/json')
+            ->withStatus(201);
+    }
 }

@@ -20,6 +20,7 @@ class UserController
         $this->_userService = new UserService($container);
     }
 
+    // Get ->
     public function getAll(Request $request, Response $response) // View All Users
     {
 
@@ -45,6 +46,7 @@ class UserController
             ->withStatus(200);
     }
 
+    // Post ->
     public function create(Request $request, Response $response) // Create User
     {
         $entry = $this->_userService->create(
@@ -56,7 +58,6 @@ class UserController
         return $response->withHeader('Content-Type', 'application/json')
             ->withStatus(201);
     }
-
 
     public function authenticate(Request $request, Response $response) // SignIn and return token
     {

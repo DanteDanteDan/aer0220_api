@@ -10,8 +10,7 @@ set_error_handler(function ($severidad, $mensaje, $fichero, $línea) {
     throw new \ErrorException($mensaje, 0, $severidad, $fichero, $línea);
 });
 
-require __DIR__ .'/../vendor/autoload.php'; //Slim
-require __DIR__ .'/../app/DataBase.php';    //Database conection
+require __DIR__ . '/../vendor/autoload.php'; //Slim
 
 // Config dependencies
 $dependenciesConfig = require __DIR__ . '/../app/dependencies.php';
@@ -33,10 +32,3 @@ $routesConfig = require __DIR__ . '/../app/routes.php';
 $routesConfig($app, $middlewares);
 
 $app->run();
-
-//http://localhost/aer0220_api/gender
-
-//get      select 200
-//post     insert 201 //registro creado
-//put      update 204 //contenido modificado / no espera respuesta
-//delete          204 //contenido modificado / no espera respuesta

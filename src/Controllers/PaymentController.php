@@ -2,28 +2,20 @@
 
 namespace App\Controllers;
 
-use PDO;
-use PDOException;
 use App\Services\PaymentService;
-use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 
 class PaymentController
 {
-
-    protected $_container;
     private $_paymentService;
 
-    // constructor receives container instance
-    public function __construct(ContainerInterface $container)
+    public function __construct()
     {
-        $this->_container = $container;
         $this->_paymentService = new PaymentService();
     }
 
-    //
-    public function getPayments(Request $request, Response $response) //
+    public function getAll(Request $request, Response $response) // All
     {
         $result = $this->_paymentService->getPayments();
         $response->getBody()->write($result->toJson());
@@ -32,7 +24,27 @@ class PaymentController
             ->withStatus(200);
     }
 
+    public function getPayment(Request $request, Response $response, $args) // One
+    {
+        $result = $this->_paymentService->getPayment($args['payment_id']);
 
+        if ($result === null) {
+            return $response->withStatus(404);
+        }
 
+        $response->getBody()->write(json_encode($result));
 
+        return $response->withHeader('Content-Type', 'application/json')
+            ->withStatus(200);
+    }
+
+    public function updatePayment(Request $request, Response $response, $args) // Update
+    {
+        $this->_paymentService->updatePayment(
+            $args['payment_id'],
+            (object) $request->getParsedBody()
+        );
+
+        return $response->withStatus(204);
+    }
 }

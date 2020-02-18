@@ -4,7 +4,6 @@ namespace App\Services;
 
 use PDO;
 use App\Models\users;
-use App\Models\cat_user_types;
 use Psr\Container\ContainerInterface;
 use Illuminate\Database\Eloquent\Collection;
 use Firebase\JWT\JWT;
@@ -29,29 +28,22 @@ class UserService
         return $result;
     }
 
-    public function getUser(int $user_id) //View One User
+    public function getUser(int $user_id) // View One User
     {
         $user = users::where('user_id', $user_id)
-                     ->first();
+            ->first();
 
         $user->userType; // FK user_type_id
 
         return $user;
-
-        /*$db = new DataBase();
-        $db = $db->conectDB();
-        $sql = "SELECT * FROM aer0220_users where user_id = $user_id ";
-        $content = $db->query($sql);
-        $result = $content->fetchAll(PDO::FETCH_OBJ);
-        return $result;*/
     }
 
     public function create($obj) // Create User
     {
         $entry = new users;
 
-        $entry->email = $obj->email;
-        $entry->password = md5($obj->password); // encrypt
+        $entry->email        = $obj->email;
+        $entry->password     = md5($obj->password); // encrypt
         $entry->user_type_id = $obj->user_type_id;
 
         $entry->save();
@@ -64,8 +56,8 @@ class UserService
         $password = md5($password); // encrypt
 
         $user = users::where('password', $password)
-                             ->where('email',$email)
-                             ->first();
+            ->where('email', $email)
+            ->first();
 
         if ($user) {
             $time = time();
@@ -87,7 +79,4 @@ class UserService
 
         return $user;
     }
-
-
-
 }

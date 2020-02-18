@@ -11,7 +11,7 @@ class _students extends Model
 
     public function studentGrade() // FK grade_id
     {
-        return $this->belongsTo('App\Models\cat_grade', 'user_type_id', 'user_type_id');
+        return $this->belongsTo('App\Models\cat_grade', 'grade_id', 'grade_id');
     }
 
     public function studentMeetUs() // FK meet_us_id

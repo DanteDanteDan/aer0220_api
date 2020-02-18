@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Services;
+
 use App\Models\cat_cities;
 use App\Models\cat_courses;
 use App\Models\cat_genders;
@@ -11,44 +12,51 @@ use App\Models\cat_payment_types;
 use App\Models\cat_relationship;
 use App\Models\cat_user_types;
 
-class CatalogueService {
+class CatalogueService
+{
 
-    // Get -> Catalogue
-    public function getCities() {
+    public function getCities()
+    {
         return cat_cities::all();
     }
 
-    public function getCourses() {
+    public function getCourses()
+    {
         return cat_courses::all();
     }
 
-    public function getGenders() {
+    public function getGenders()
+    {
         return cat_genders::all();
     }
 
-    public function getGrade() {
+    public function getGrade()
+    {
         return cat_grade::all();
     }
 
-    public function getMeetUs() {
+    public function getMeetUs()
+    {
         return cat_meet_us::all();
     }
 
-    public function getPaymentStatus() {
+    public function getPaymentStatus()
+    {
         return cat_payment_status::all();
     }
 
-    public function getPaymentType() {
+    public function getPaymentType()
+    {
         return cat_payment_types::all();
     }
 
-    public function getRelationship() {
+    public function getRelationship()
+    {
         return cat_relationship::all();
     }
 
-    public function getUserTypes() {
+    public function getUserTypes()
+    {
         return cat_user_types::all();
     }
-
-
- }
+}
