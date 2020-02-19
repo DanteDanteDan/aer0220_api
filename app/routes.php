@@ -60,10 +60,14 @@ return function (App $app, array $middlewares) {
         $group->get('grades', CatalogueController::class . ':getGrades');
         $group->get('meet_us', CatalogueController::class . ':getMeetUs');
         $group->get('payments_status', CatalogueController::class . ':getPaymentsStatus');
-        $group->get('payments_type', CatalogueController::class . ':getPaymentTypes');
+        $group->get('payment_types', CatalogueController::class . ':getPaymentTypes');
         $group->get('relationships', CatalogueController::class . ':getRelationships');
         $group->get('user_types', CatalogueController::class . ':getUserTypes');
-    })->add($middlewares['authMiddleware']); // Token Validation
+    }); // Dont Need Token Validation
+
+    // Total students enrolled
+    // Total amount of the inscriptions
+    // Average student age
 
     // SignIn
     $app->post( __BASE_PATH__ . 'sign-in', UserController::class . ':authenticate');
