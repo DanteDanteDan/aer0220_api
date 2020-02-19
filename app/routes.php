@@ -23,11 +23,11 @@ return function (App $app, array $middlewares) {
     $app->group($settings['basePath'] . 'students', function (RouteCollectorProxy $group) use ($middlewares) {
 
         // View Students
-        $group->get('', StudentController::class . ':getAll');
-        $group->get('/{student_id}', StudentController::class . ':getStudent');
+        $group->get('', StudentController::class . ':getAll')->add($middlewares['authMiddleware']); // Token Validation
+        $group->get('/{student_id}', StudentController::class . ':getStudent')->add($middlewares['authMiddleware']); // Token Validation
         // Insert Students / Create Payment
         $group->post('', StudentController::class . ':create');
-    })->add($middlewares['authMiddleware']); // Token Validation
+    });
 
     // Payments
     $app->group($settings['basePath'] . 'payments', function (RouteCollectorProxy $group) use ($middlewares) {
@@ -63,7 +63,9 @@ return function (App $app, array $middlewares) {
         $group->get('user_types', CatalogueController::class . ':getUserTypes');
     })->add($middlewares['authMiddleware']); // Token Validation
 
-    // Count students
+    // Total students enrolled
+    // total amount of the inscriptions
+    // average student age
 
     // SignIn
     $app->post($settings['basePath'] . 'sign-in', UserController::class . ':authenticate');
