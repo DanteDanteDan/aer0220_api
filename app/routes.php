@@ -14,13 +14,15 @@ return function (App $app, array $middlewares) {
     $container = $app->getContainer();
     $settings = $container->get('settings');
 
+    define('__BASE_PATH__', $settings['basePath']);
+
     // CORS requests
-    $app->options($settings['basePath'] . '{routes:.+}', function ($request, $response, $args) {
+    $app->options( __BASE_PATH__ . '{routes:.+}', function ($request, $response, $args) {
         return $response;
     });
 
     // Students
-    $app->group($settings['basePath'] . 'students', function (RouteCollectorProxy $group) use ($middlewares) {
+    $app->group( __BASE_PATH__ . 'students', function (RouteCollectorProxy $group) use ($middlewares) {
 
         // View Students
         $group->get('', StudentController::class . ':getAll')->add($middlewares['authMiddleware']); // Token Validation
@@ -30,7 +32,7 @@ return function (App $app, array $middlewares) {
     });
 
     // Payments
-    $app->group($settings['basePath'] . 'payments', function (RouteCollectorProxy $group) use ($middlewares) {
+    $app->group( __BASE_PATH__ . 'payments', function (RouteCollectorProxy $group) use ($middlewares) {
 
         // View Payments
         $group->get('', PaymentController::class . ':getAll');
@@ -40,7 +42,7 @@ return function (App $app, array $middlewares) {
     })->add($middlewares['authMiddleware']); // Token Validation
 
     // Users
-    $app->group($settings['basePath'] . 'users', function (RouteCollectorProxy $group) use ($middlewares) {
+    $app->group( __BASE_PATH__ . 'users', function (RouteCollectorProxy $group) use ($middlewares) {
 
         // View Users
         $group->get('', UserController::class . ':getAll');
@@ -50,28 +52,24 @@ return function (App $app, array $middlewares) {
     })->add($middlewares['authMiddleware']); // Token Validation
 
     // Catalogues
-    $app->group($settings['basePath'] . 'cat/', function (RouteCollectorProxy $group) use ($middlewares) {
+    $app->group( __BASE_PATH__ . 'catalogues/', function (RouteCollectorProxy $group) use ($middlewares) {
         // View Catalogues
         $group->get('cities', CatalogueController::class . ':getCities');
         $group->get('courses', CatalogueController::class . ':getCourses');
         $group->get('genders', CatalogueController::class . ':getGenders');
-        $group->get('grade', CatalogueController::class . ':getGrade');
+        $group->get('grades', CatalogueController::class . ':getGrades');
         $group->get('meet_us', CatalogueController::class . ':getMeetUs');
-        $group->get('payment_status', CatalogueController::class . ':getPaymentStatus');
-        $group->get('payment_type', CatalogueController::class . ':getPaymentType');
-        $group->get('relationship', CatalogueController::class . ':getRelationship');
+        $group->get('payments_status', CatalogueController::class . ':getPaymentsStatus');
+        $group->get('payments_type', CatalogueController::class . ':getPaymentTypes');
+        $group->get('relationships', CatalogueController::class . ':getRelationships');
         $group->get('user_types', CatalogueController::class . ':getUserTypes');
     })->add($middlewares['authMiddleware']); // Token Validation
 
-    // Total students enrolled
-    // total amount of the inscriptions
-    // average student age
-
     // SignIn
-    $app->post($settings['basePath'] . 'sign-in', UserController::class . ':authenticate');
+    $app->post( __BASE_PATH__ . 'sign-in', UserController::class . ':authenticate');
 
     // CORS requests
-    $app->map(['GET', 'POST', 'PUT', 'DELETE', 'PATCH'], $settings['basePath'] . '{routes:.+}', function ($request, $response) {
+    $app->map(['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],  __BASE_PATH__ . '{routes:.+}', function ($request, $response) {
         throw new HttpNotFoundException($request);
     });
 };

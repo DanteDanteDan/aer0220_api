@@ -30,7 +30,7 @@ class CatalogueService
         return cat_genders::all();
     }
 
-    public function getGrade()
+    public function getGrades()
     {
         return cat_grade::all();
     }
@@ -40,17 +40,17 @@ class CatalogueService
         return cat_meet_us::all();
     }
 
-    public function getPaymentStatus()
+    public function getPaymentsStatus()
     {
         return cat_payment_status::all();
     }
 
-    public function getPaymentType()
+    public function getPaymentTypes()
     {
         return cat_payment_types::all();
     }
 
-    public function getRelationship()
+    public function getRelationships()
     {
         return cat_relationship::all();
     }

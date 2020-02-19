@@ -25,7 +25,7 @@ $middlewares = $middlewaresConfig($app);
 
 // Config Database - Eloquent
 $dbConfig = require __DIR__ . '/../app/db.php';
-$dbConfig($app->getContainer()->get('settings')['db']);
+$dbConfig($app);
 
 // Config routes
 $routesConfig = require __DIR__ . '/../app/routes.php';

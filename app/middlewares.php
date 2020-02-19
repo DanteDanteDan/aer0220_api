@@ -45,5 +45,4 @@ return function (App $app) {
         'authMiddleware' => $authMiddleware
     ];
 
-    //$app->add($authMiddleware); // global
 };

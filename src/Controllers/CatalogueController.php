@@ -45,9 +45,9 @@ class CatalogueController
             ->withStatus(200);
     }
 
-    public function getGrade(Request $request, Response $response)
+    public function getGrades(Request $request, Response $response)
     {
-        $result = $this->_catalogueService->getGrade();
+        $result = $this->_catalogueService->getGrades();
         $response->getBody()->write($result->toJson());
 
         return $response->withHeader('Content-Type', 'application/json')
@@ -63,9 +63,27 @@ class CatalogueController
             ->withStatus(200);
     }
 
-    public function getRelationship(Request $request, Response $response)
+    public function getPaymentsStatus(Request $request, Response $response)
     {
-        $result = $this->_catalogueService->getRelationship();
+        $result = $this->_catalogueService->getPaymentsStatus();
+        $response->getBody()->write($result->toJson());
+
+        return $response->withHeader('Content-Type', 'application/json')
+            ->withStatus(200);
+    }
+
+    public function getPaymentTypes(Request $request, Response $response)
+    {
+        $result = $this->_catalogueService->getPaymentTypes();
+        $response->getBody()->write($result->toJson());
+
+        return $response->withHeader('Content-Type', 'application/json')
+            ->withStatus(200);
+    }
+
+    public function getRelationships(Request $request, Response $response)
+    {
+        $result = $this->_catalogueService->getRelationships();
         $response->getBody()->write($result->toJson());
 
         return $response->withHeader('Content-Type', 'application/json')
