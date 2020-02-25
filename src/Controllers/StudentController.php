@@ -3,7 +3,6 @@
 namespace App\Controllers;
 
 use App\Services\StudentService;
-use App\Services\PaymentService;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 
@@ -11,12 +10,10 @@ class StudentController
 {
 
     private $_studentService;
-    private $_paymentService;
 
     public function __construct()
     {
         $this->_studentService = new StudentService();
-        $this->_paymentService = new PaymentService();
     }
 
     // Get ->
@@ -44,19 +41,69 @@ class StudentController
     }
 
     // Post ->
+
     public function create(Request $request, Response $response, $args) // Create Student
     {
-        $entry = $this->_studentService->create((object) $request->getParsedBody());
+        // check if exists
+        $entry = $this->_studentService->getExistStudent((object) $request->getParsedBody());
 
-        $response->getBody()->write($entry->toJson());
+        if ($entry === null) { //  if does not exist, enroll in course 1
+
+            $courses_id = 1;
+
+            // Create
+            $entry = $this->_studentService->create((object) $request->getParsedBody(), $courses_id);
+
+            $student_id = $entry->id; // extract id to make the payment
+
+            $response->getBody()->write($entry->toJson());
+
+        } else { // if exist, add 1 to the course that belongs
+
+            $student_id = $entry->student_id; // extract id only if exist
+            $courses_id = $entry->courses_id;
+
+            $courses_id = $courses_id + 1;
+
+            // Update
+            $entry = $this->_studentService->renewStudent((object) $request->getParsedBody(), $courses_id);
+
+            $response->getBody()->write($entry->toJson());
+        }
+
+        // See amount to pay for the course
+        $amount = $this->_studentService->getAmount((object) $request->getParsedBody(), $courses_id);
+
+        // extract payment_type and city
+        $payment_types_id = $request->getParsedBody()['payment_types_id'];
+        $city_id = $request->getParsedBody()['city_id'];
+
+        if ( $payment_types_id == 1 ) { // monthly payments
+
+            $percentage = $this->_studentService->getPercentage($city_id); // extra amount to pay depending on the city
+
+            $perCent = 100;
+            $extraCost = $percentage->percentage;
+            $normalAmount = $amount->amount;
+
+
+            $totalExtraAmount = $normalAmount + (($normalAmount * $extraCost) / $perCent); // Total + extra cost
+
+        } else { // Single payments
+
+            $totalExtraAmount = $amount->amount; // there is no extra cost with single payment
+
+        }
 
         // Create Payment at the same time
-                            // _paymentService
-        $entryPayment = $this->_studentService->createPayment((object) $request->getParsedBody(), $entry->id);
+        $entryPayment = $this->_studentService->createPayment((object) $request->getParsedBody(), $student_id, $totalExtraAmount);
 
         $response->getBody()->write($entryPayment->toJson());
 
         return $response->withHeader('Content-Type', 'application/json')
             ->withStatus(201);
+
     }
+
+
 }

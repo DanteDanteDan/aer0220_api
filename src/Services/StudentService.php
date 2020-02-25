@@ -4,6 +4,9 @@ namespace App\Services;
 
 use App\Models\_payments;
 use App\Models\_students;
+use App\Models\cat_cities_courses;
+use App\Models\cat_Cities;
+
 
 class StudentService
 {
@@ -42,8 +45,17 @@ class StudentService
         return $student;
     }
 
+    public function getExistStudent($obj) // If Exist
+    {
+
+        $student = _students::all()
+                            ->where('curp', $obj->curp)
+                            ->first();
+        return $student;
+    }
+
     // Post ->
-    public function create($obj) // Create Student
+    public function create($obj, $courses_id) // Create Student
     {
 
         $entryStudent = new _students;
@@ -65,24 +77,71 @@ class StudentService
         $entryStudent->relationship_id = $obj->relationship_id;
         $entryStudent->gender_id       = $obj->gender_id;
         $entryStudent->city_id         = $obj->city_id;
-        $entryStudent->courses_id      = $obj->courses_id;
-        $entryStudent->user_type_id    = $obj->user_type_id;
+        $entryStudent->courses_id      = $courses_id;
+        $entryStudent->user_type_id    = 2;
 
         $entryStudent->save();
 
         return $entryStudent;
     }
 
+    public function renewStudent($obj, $courses_id) // renew student
+    {
+        $user_type_id = 2;
 
-    public function createPayment($obj, $id) // Create Payment
+        _students::where('curp', $obj->curp)->update(
+            array(
+                'name'            => $obj->name,
+                'name_paternal'   => $obj->name_paternal,
+                'name_maternal'   => $obj->name_maternal,
+                'curp'            => $obj->curp,
+                'birth_date'      => $obj->birth_date,
+                'allergies'       => $obj->allergies,
+                'father_name'     => $obj->father_name,
+                'email'           => $obj->email,
+                'whatsapp'        => $obj->whatsapp,
+                'home_phone'      => $obj->home_phone,
+                'origin_school'   => $obj->origin_school,
+                'grade_id'        => $obj->grade_id,
+                'meet_us_id'      => $obj->meet_us_id,
+                'relationship_id' => $obj->relationship_id,
+                'gender_id'       => $obj->gender_id,
+                'city_id'         => $obj->city_id,
+                'courses_id'      => $courses_id,
+                'user_type_id'    => $user_type_id
+            )
+        );
+
+    }
+
+    public function getAmount($obj, $courses_id) // Get Amount
+    {
+        $amount = cat_cities_courses::all()
+                            ->where('city_id', $obj->city_id)
+                            ->where('courses_id', $courses_id)
+                            ->first();
+        return $amount;
+    }
+
+    public function getPercentage($city_id) // Get Percentaje
+    {
+        $percentage = cat_Cities::all()
+                            ->where('city_id', $city_id)
+                            ->first();
+        return $percentage;
+    }
+
+    public function createPayment($obj, $id, $amount) // Create Payment
     {
         $entryPayment = new _payments;
 
+        $payment_status_id = 2;
+        //$amount = 2500;
         // Payment
         $entryPayment->student_id        = $id;
         $entryPayment->payment_types_id  = $obj->payment_types_id;
-        $entryPayment->amount            = $obj->amount;
-        $entryPayment->payment_status_id = $obj->payment_status_id;
+        $entryPayment->amount            = $amount;
+        $entryPayment->payment_status_id = $payment_status_id;
 
         $entryPayment->save();
 

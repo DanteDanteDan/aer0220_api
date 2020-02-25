@@ -2,7 +2,6 @@
 
 namespace App\Services;
 
-use PDO;
 use App\Models\users;
 use Psr\Container\ContainerInterface;
 use Illuminate\Database\Eloquent\Collection;
