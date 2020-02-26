@@ -27,6 +27,7 @@ return function (App $app, array $middlewares) {
         // View Students
         $group->get('', StudentController::class . ':getAll')->add($middlewares['authMiddleware']); // Token Validation
         $group->get('/{student_id}', StudentController::class . ':getStudent')->add($middlewares['authMiddleware']); // Token Validation
+        //$group->get('/cuantos', StudentController::class . ':getCount')->add($middlewares['authMiddleware']);
         // Insert Students / Create Payment
         $group->post('', StudentController::class . ':create');
     });
@@ -65,9 +66,33 @@ return function (App $app, array $middlewares) {
         $group->get('user_types', CatalogueController::class . ':getUserTypes');
     }); // Dont Need Token Validation
 
-    // Total students enrolled
-    // Total amount of the inscriptions
+    // Alumnos inscritos en un curso / SELECT COUNT(*) FROM `aer0220_students` WHERE courses_id = 1
+    // Total amount of the inscriptions / SELECT SUM(amount) FROM `aer0220_payments`
     // Average student age
+
+   /*
+    SELECT aer0220_students.courses_id, aer0220_payments.amount FROM aer0220_students INNER JOIN aer0220_payments 
+    WHERE aer0220_students.student_id = aer0220_payments.student_id
+
+    SELECT aer0220_students.courses_id, aer0220_payments.amount FROM aer0220_students INNER JOIN aer0220_payments 
+    WHERE aer0220_students.student_id = aer0220_payments.student_id AND aer0220_students.courses_id = 5
+
+
+    SELECT SUM(aer0220_payments.amount) FROM aer0220_students INNER JOIN aer0220_payments 
+    WHERE aer0220_students.student_id = aer0220_payments.student_id AND aer0220_students.courses_id = 1
+   */
+
+    // Total students enrolled
+    $app->group( __BASE_PATH__ . 'count/', function (RouteCollectorProxy $group) use ($middlewares) {
+
+        // View Users
+        $group->get('students', StudentController::class . ':getCount');
+        $group->get('users', UserController::class . ':getCount');
+        $group->get('courses/{courses_id}', StudentController::class . ':getStudentsCourses');
+        $group->get('amount', PaymentController::class . ':getTotalAmount');
+        $group->get('amount/{courses_id}', StudentController::class . ':getAmountCourses');
+
+    })->add($middlewares['authMiddleware']); // Token Validation
 
     // SignIn
     $app->post( __BASE_PATH__ . 'sign-in', UserController::class . ':authenticate');

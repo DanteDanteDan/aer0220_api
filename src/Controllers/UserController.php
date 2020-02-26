@@ -31,6 +31,15 @@ class UserController
             ->withStatus(200);
     }
 
+    public function getCount(Request $request, Response $response) // Count
+    {
+        $result = $this->_userService->getCountUsers();
+        $response->getBody()->write(json_encode($result));
+
+        return $response->withHeader('Content-Type', 'application/json')
+            ->withStatus(200);
+    }
+
     public function getUser(Request $request, Response $response, $args) // View One User
     {
 

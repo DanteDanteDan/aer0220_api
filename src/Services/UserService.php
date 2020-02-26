@@ -27,6 +27,15 @@ class UserService
         return $result;
     }
 
+    public function getCountUsers() // Count users
+    {
+
+        $result = users::all()
+            ->count();
+
+        return $result;
+    }
+
     public function getUser(int $user_id) // View One User
     {
         $user = users::where('user_id', $user_id)

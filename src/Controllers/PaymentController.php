@@ -38,6 +38,15 @@ class PaymentController
             ->withStatus(200);
     }
 
+    public function getTotalAmount(Request $request, Response $response) // Total Amount
+    {
+        $result = $this->_paymentService->getTotalAmount();
+        $response->getBody()->write(json_encode($result));
+
+        return $response->withHeader('Content-Type', 'application/json')
+            ->withStatus(200);
+    }
+
     public function updatePayment(Request $request, Response $response, $args) // Update
     {
         $this->_paymentService->updatePayment(

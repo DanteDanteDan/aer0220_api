@@ -45,13 +45,64 @@ class StudentService
         return $student;
     }
 
+    public function getCountStudents() // Count students
+    {
+
+        $result = _students::count();
+
+        return $result;
+    }
+
+    public function getStudentsCourses($courses_id) // Count Students in Course
+    {
+
+        $result = _students::where('courses_id', $courses_id)
+                           ->count();
+
+        return $result;
+    }
+
+    /*
+    SELECT SUM(aer0220_payments.amount) FROM aer0220_students INNER JOIN aer0220_payments 
+    WHERE aer0220_students.student_id = aer0220_payments.student_id AND aer0220_students.courses_id = 1
+    */
+
+    public function getAmountCourses($courses_id) // Total Amount in one course
+    {
+
+        $result = _students::select('aer0220_payments.amount')
+                            ->join('aer0220_payments', 'aer0220_students.student_id', '=', 'aer0220_payments.student_id')
+                            ->where('aer0220_students.courses_id', $courses_id)
+                            ->get()
+                            ->SUM('amount');
+
+        return $result;
+    }
+
     public function getExistStudent($obj) // If Exist
     {
 
         $student = _students::all()
-                            ->where('curp', $obj->curp)
-                            ->first();
+            ->where('curp', $obj->curp)
+            ->first();
         return $student;
+    }
+
+    public function getAmount($obj, $courses_id) // Get Amount
+    {
+        $amount = cat_cities_courses::all()
+            ->where('city_id', $obj->city_id)
+            ->where('courses_id', $courses_id)
+            ->first();
+        return $amount;
+    }
+
+    public function getPercentage($city_id) // Get Percentaje
+    {
+        $percentage = cat_Cities::all()
+            ->where('city_id', $city_id)
+            ->first();
+        return $percentage;
     }
 
     // Post ->
@@ -111,24 +162,6 @@ class StudentService
                 'user_type_id'    => $user_type_id
             )
         );
-
-    }
-
-    public function getAmount($obj, $courses_id) // Get Amount
-    {
-        $amount = cat_cities_courses::all()
-                            ->where('city_id', $obj->city_id)
-                            ->where('courses_id', $courses_id)
-                            ->first();
-        return $amount;
-    }
-
-    public function getPercentage($city_id) // Get Percentaje
-    {
-        $percentage = cat_Cities::all()
-                            ->where('city_id', $city_id)
-                            ->first();
-        return $percentage;
     }
 
     public function createPayment($obj, $id, $amount) // Create Payment

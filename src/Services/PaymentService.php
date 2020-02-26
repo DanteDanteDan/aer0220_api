@@ -34,6 +34,14 @@ class PaymentService
         return $payment;
     }
 
+    public function getTotalAmount() // Total Amount
+    {
+
+        $result = _payments::sum('amount');
+
+        return $result;
+    }
+
     // Update -> Status Payment
     public function updatePayment($payment_id, $obj)
     {
