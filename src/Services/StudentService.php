@@ -4,8 +4,8 @@ namespace App\Services;
 
 use App\Models\_payments;
 use App\Models\_students;
-use App\Models\cat_cities_courses;
 use App\Models\cat_Cities;
+use App\Models\cat_cities_courses;
 
 
 class StudentService
@@ -62,11 +62,6 @@ class StudentService
         return $result;
     }
 
-    /*
-    SELECT SUM(aer0220_payments.amount) FROM aer0220_students INNER JOIN aer0220_payments 
-    WHERE aer0220_students.student_id = aer0220_payments.student_id AND aer0220_students.courses_id = 1
-    */
-
     public function getAmountCourses($courses_id) // Total Amount in one course
     {
 
@@ -79,7 +74,7 @@ class StudentService
         return $result;
     }
 
-    public function getExistStudent($obj) // If Exist
+    public function getExistStudent($obj) // If Exist / Student
     {
 
         $student = _students::all()
@@ -88,7 +83,7 @@ class StudentService
         return $student;
     }
 
-    public function getAmount($obj, $courses_id) // Get Amount
+    public function getAmount($obj, $courses_id) // Get Amount per course
     {
         $amount = cat_cities_courses::all()
             ->where('city_id', $obj->city_id)
@@ -97,12 +92,30 @@ class StudentService
         return $amount;
     }
 
-    public function getPercentage($city_id) // Get Percentaje
+    public function getPercentage($city_id) // Get Percentaje of city
     {
         $percentage = cat_Cities::all()
             ->where('city_id', $city_id)
             ->first();
         return $percentage;
+    }
+
+    public function getBirthDate($courses_id) // Get BirthDate
+    {
+        $result = _students::select('birth_date')
+                            ->where('courses_id', $courses_id)
+                            ->get();
+        return $result;
+
+    }
+
+    public function getLastRegistration($courses_id) // Get Last Registration
+    {
+        $result = _students::select('updated_at')
+                            ->where('courses_id', $courses_id)
+                            ->orderBy('updated_at', 'desc')->first();;
+        return $result;
+
     }
 
     // Post ->
@@ -169,7 +182,7 @@ class StudentService
         $entryPayment = new _payments;
 
         $payment_status_id = 2;
-        //$amount = 2500;
+
         // Payment
         $entryPayment->student_id        = $id;
         $entryPayment->payment_types_id  = $obj->payment_types_id;
