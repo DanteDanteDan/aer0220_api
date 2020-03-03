@@ -49,10 +49,7 @@ class PaymentController
 
     public function updatePayment(Request $request, Response $response, $args) // Update
     {
-        $this->_paymentService->updatePayment(
-            $args['payment_id'],
-            (object) $request->getParsedBody()
-        );
+        $this->_paymentService->updatePayment($args['student_id']);
 
         return $response->withStatus(204);
     }

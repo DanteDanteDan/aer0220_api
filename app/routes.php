@@ -22,31 +22,42 @@ return function (App $app, array $middlewares) {
     });
 
     // Students
-    $app->group( __BASE_PATH__ . 'students', function (RouteCollectorProxy $group) use ($middlewares) {
+    $app->group( __BASE_PATH__ . 'students/', function (RouteCollectorProxy $group) use ($middlewares) {
 
         // View Students
-        $group->get('', StudentController::class . ':getAll')->add($middlewares['authMiddleware']); // Token Validation
-        $group->get('/{student_id}', StudentController::class . ':getStudent')->add($middlewares['authMiddleware']); // Token Validation
+        $group->get('', StudentController::class . ':getAll')->add($middlewares['authMiddleware']);                                       // Token Validation
+        $group->get('{student_id}', StudentController::class . ':getStudent')->add($middlewares['authMiddleware']);                       // Token Validation
+        // Count
+        $group->get('count/', StudentController::class . ':getCount')->add($middlewares['authMiddleware']);                               // Total students enrolled
+        $group->get('courses/{courses_id}', StudentController::class . ':getStudentsCourses')->add($middlewares['authMiddleware']);       // Total students in course
+        $group->get('amount/{courses_id}', StudentController::class . ':getAmountCourses')->add($middlewares['authMiddleware']);          // Total amount per course
+        $group->get('age/{courses_id}', StudentController::class . ':getBirthDate')->add($middlewares['authMiddleware']);                 // Total Age / Average
+        $group->get('registration/{courses_id}', StudentController::class . ':getLastRegistration')->add($middlewares['authMiddleware']); // Last Registration
+
         // Insert Students / Create Payment
         $group->post('', StudentController::class . ':create');
     });
 
     // Payments
-    $app->group( __BASE_PATH__ . 'payments', function (RouteCollectorProxy $group) use ($middlewares) {
+    $app->group( __BASE_PATH__ . 'payments/', function (RouteCollectorProxy $group) use ($middlewares) {
 
         // View Payments
         $group->get('', PaymentController::class . ':getAll');
-        $group->get('/{payment_id}', PaymentController::class . ':getPayment');
+        $group->get('{payment_id}', PaymentController::class . ':getPayment');
+        // Count
+        $group->get('amount/', PaymentController::class . ':getTotalAmount'); // Total amount
         // Update -> Payment Status
-        $group->put('/{payment_id}', PaymentController::class . ':updatePayment');
+        $group->put('{student_id}', PaymentController::class . ':updatePayment');
     })->add($middlewares['authMiddleware']); // Token Validation
 
     // Users
-    $app->group( __BASE_PATH__ . 'users', function (RouteCollectorProxy $group) use ($middlewares) {
+    $app->group( __BASE_PATH__ . 'users/', function (RouteCollectorProxy $group) use ($middlewares) {
 
         // View Users
         $group->get('', UserController::class . ':getAll');
-        $group->get('/{user_id}', UserController::class . ':getUser');
+        $group->get('{user_id}', UserController::class . ':getUser');
+        // Count
+        $group->get('count/', UserController::class . ':getCount'); // Total users enrolled
         // Insert Users
         $group->post('', UserController::class . ':create');
     })->add($middlewares['authMiddleware']); // Token Validation
@@ -64,20 +75,6 @@ return function (App $app, array $middlewares) {
         $group->get('relationships', CatalogueController::class . ':getRelationships');
         $group->get('user_types', CatalogueController::class . ':getUserTypes');
     }); // Dont Need Token Validation
-
-
-    //Correct this group
-    $app->group( __BASE_PATH__ . 'count/', function (RouteCollectorProxy $group) use ($middlewares) {
-
-        $group->get('students', StudentController::class . ':getCount');                             // Total students enrolled
-        $group->get('users', UserController::class . ':getCount');                                   // Total users enrolled
-        $group->get('courses/{courses_id}', StudentController::class . ':getStudentsCourses');       // Total students in course
-        $group->get('amount', PaymentController::class . ':getTotalAmount');                         // Total amount
-        $group->get('amount/{courses_id}', StudentController::class . ':getAmountCourses');          // Total amount per course
-        $group->get('age/{courses_id}', StudentController::class . ':getBirthDate');                 // Total Age
-        $group->get('registration/{courses_id}', StudentController::class . ':getLastRegistration'); // Last Registration
-
-    })->add($middlewares['authMiddleware']); // Token Validation
 
     // SignIn
     $app->post( __BASE_PATH__ . 'sign-in', UserController::class . ':authenticate');

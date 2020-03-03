@@ -20,6 +20,19 @@ class StudentController
     public function getAll(Request $request, Response $response) // All
     {
         $result = $this->_studentService->getStudents();
+
+        foreach ($result as $date) { // Get Age
+
+            $str = $date->birth_date;
+
+            $time = time() - strtotime($str);
+
+            $age = floor($time / 31556926); // Time / seconds of the year
+
+            $date->birth_date = $age; // Add to result
+
+        }
+
         $response->getBody()->write($result->toJson());
 
         return $response->withHeader('Content-Type', 'application/json')
@@ -134,6 +147,74 @@ class StudentController
     }
 
     // Post ->
+    public function create1(Request $request, Response $response, $args) // Create Student
+    {
+        // check if exists
+        $entry = $this->_studentService->getExistStudent((object) $request->getParsedBody());
+
+
+        if ($entry === null) { //  if does not exist, enroll in course 1
+            $courses_id = 1;
+            $entry = $this->_studentService->create((object) $request->getParsedBody(), $courses_id);
+
+            $response->getBody()->write($entry->toJson());
+
+            // getAmount
+            $amount = $this->_studentService->getAmount((object) $request->getParsedBody(), $courses_id);
+            $payment_types_id = $request->getParsedBody()['payment_types_id'];
+
+            if ( $payment_types_id == 1 ) { // monthly
+
+                $percentage = $this->_studentService->getPercentage($entry->city_id);
+
+                $perCent = 100;
+                $extraCost = $percentage->percentage;
+                $normalAmount = $amount->amount;
+
+
+                $totalExtraAmount = $normalAmount + (($normalAmount * $extraCost) / $perCent);
+
+            } else {
+
+                $totalExtraAmount = $amount->amount;
+
+            }
+
+            // Create Payment at the same time
+                                // _paymentService
+            $entryPayment = $this->_studentService->createPayment((object) $request->getParsedBody(), $entry->id, $totalExtraAmount);
+
+            $response->getBody()->write($entryPayment->toJson());
+
+            return $response->withHeader('Content-Type', 'application/json')
+                ->withStatus(201);
+
+        } else {    // if exist, add 1 to the course that belongs
+
+            $courses_id = $entry->courses_id;
+            $student_id = $entry->student_id;
+
+            $courses_id = $courses_id + 1;
+            $entry = $this->_studentService->renewStudent((object) $request->getParsedBody(), $courses_id);
+
+
+            // getAmount
+            $amount = $this->_studentService->getAmount((object) $request->getParsedBody(), $courses_id);
+            // if payment_types == 1
+            // Aplicar porcentaje
+
+
+            // Create Payment
+            $entryPayment = $this->_studentService->createPayment((object) $request->getParsedBody(), $student_id, $amount->amount);
+
+            $response->getBody()->write($entryPayment->toJson());
+
+            return $response->withHeader('Content-Type', 'application/json')
+                ->withStatus(201);
+
+        }
+    }
+
     public function create(Request $request, Response $response, $args) // Create Student
     {
         // check if exists
@@ -143,8 +224,12 @@ class StudentController
 
             $courses_id = 1;
 
+            // Generate reference
+            $permitted_chars = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+            $reference = substr(str_shuffle($permitted_chars), 0, 10);
+
             // Create
-            $entry = $this->_studentService->create((object) $request->getParsedBody(), $courses_id);
+            $entry = $this->_studentService->create((object) $request->getParsedBody(), $courses_id, $reference);
 
             $student_id = $entry->id; // extract id to make the payment
 

@@ -80,7 +80,7 @@ class UserService
                 'access_token' => JWT::encode($token, $this->_secretKey),
                 'user' => [
                     'email' => $user->email,
-                    'user_type_id' => $user->user_type_id
+                    'name' => $user->name
                 ],
             ];
         }

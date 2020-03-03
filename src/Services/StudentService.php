@@ -18,6 +18,7 @@ class StudentService
         $result = _students::all();
 
         foreach ($result as $item) { // FK
+            $item->studentGender;
             $item->studentGrade;
             $item->studentMeetUs;
             $item->studentRelationship;
@@ -35,6 +36,7 @@ class StudentService
         $student = _students::where('student_id', $student_id)
             ->first();
         // FK user_type_id
+        $student->studentGender;
         $student->studentGrade;
         $student->studentMeetUs;
         $student->studentRelationship;
@@ -62,6 +64,7 @@ class StudentService
         return $result;
     }
 
+
     public function getAmountCourses($courses_id) // Total Amount in one course
     {
 
@@ -70,7 +73,6 @@ class StudentService
                             ->where('aer0220_students.courses_id', $courses_id)
                             ->get()
                             ->SUM('amount');
-
         return $result;
     }
 
@@ -119,12 +121,13 @@ class StudentService
     }
 
     // Post ->
-    public function create($obj, $courses_id) // Create Student
+    public function create($obj, $courses_id, $reference) // Create Student
     {
 
         $entryStudent = new _students;
 
         // Student
+        $entryStudent->reference       = $reference;
         $entryStudent->name            = $obj->name;
         $entryStudent->name_paternal   = $obj->name_paternal;
         $entryStudent->name_maternal   = $obj->name_maternal;
